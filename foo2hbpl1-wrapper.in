@@ -619,6 +619,15 @@ else
 fi
 
 #
+#	Under CUPS, report the toner levels and printer state, using the
+#	device ID that the backend reads from the printer.  This happens before
+#	the job is printed, so the levels are those left by the previous job.
+#
+if [ "$DEVICE_URI" != "" ] && type hbpl1status >/dev/null 2>&1; then
+    hbpl1status -s -c </dev/null >/dev/null
+fi
+
+#
 #	Main Program, just cobble together the pipeline and run it
 #
 #	The malarky with file descriptors 1 and 3 is to avoid a bug in
