@@ -147,6 +147,9 @@ FILES	=	\
 		hbpl.h \
 		foo2hbpl1.c \
 		foo2hbpl1.1in \
+		hbpl1status.c \
+		hbpl1status.1in \
+		README.hbpl1status \
 		foo2hbpl2.c \
 		foo2hbpl2.1in \
 		foo2ddst.c \
@@ -267,7 +270,7 @@ PROGS+=		foo2ddst ddstdecode
 ifneq ($(CUPS_SERVERBIN),)
     ifneq ($(CUPS_DEVEL),)
 	ifneq ($(CUPS_GOODAPI),)
-	    PROGS+=	command2foo2lava-pjl
+	    PROGS+=	command2foo2lava-pjl hbpl1status
 	endif
     endif
 endif
@@ -285,7 +288,7 @@ MANPAGES+=	foo2lava-wrapper.1 foo2lava.1 lavadecode.1 opldecode.1
 MANPAGES+=	foo2qpdl-wrapper.1 foo2qpdl.1 qpdldecode.1
 MANPAGES+=	foo2slx-wrapper.1 foo2slx.1 slxdecode.1
 MANPAGES+=	foo2hiperc-wrapper.1 foo2hiperc.1 hipercdecode.1
-MANPAGES+=	foo2hbpl1-wrapper.1 foo2hbpl1.1
+MANPAGES+=	foo2hbpl1-wrapper.1 foo2hbpl1.1 hbpl1status.1
 MANPAGES+=	foo2hbpl2-wrapper.1 foo2hbpl2.1 hbpldecode.1
 MANPAGES+=	foo2ddst-wrapper.1 foo2ddst.1 ddstdecode.1
 MANPAGES+=	gipddecode.1
@@ -626,6 +629,12 @@ command2foo2lava-pjl: command2foo2lava-pjl.o
 
 command2foo2lava-pjl.o: command2foo2lava-pjl.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -I/usr/local/include -c command2foo2lava-pjl.c
+
+hbpl1status: hbpl1status.o
+	$(CC) $(CFLAGS) -L/usr/local/lib hbpl1status.o -lcups -o $@ $(LDFLAGS)
+
+hbpl1status.o: hbpl1status.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -I/usr/local/include -c hbpl1status.c
 
 #
 # Installation rules
@@ -1090,6 +1099,8 @@ install-filter:
 	if [ "$(CUPS_SERVERBIN)" != "" ]; then \
 	    $(INSTALL) -d $(CUPS_SERVERBIN)/filter; \
 	    ln -sf $(BIN)/command2foo2lava-pjl $(CUPS_SERVERBIN)/filter/; \
+	    ln -sf $(BIN)/hbpl1status \
+		$(CUPS_SERVERBIN)/filter/command2foo2hbpl1; \
 	fi; \
 	ln -sf $(BIN)/psicc $(BIN)/foo2zjs-icc2ps
 
@@ -1239,6 +1250,8 @@ uninstall: uninstall-aa
 	-rm -f /usr/bin/foo2zjs-pstops
 	-rm -f /usr/bin/command2foo2lava-pjl
 	-rm -f /usr/lib/cups/filter/command2foo2lava-pjl
+	-rm -f /usr/bin/hbpl1status
+	-rm -f /usr/lib/cups/filter/command2foo2hbpl1
 	-rm -f /usr/share/applications/hplj1020.desktop
 	-rm -f /usr/share/pixmaps/hplj1020_icon.png
 	-cd foomatic-db; for i in `find driver opt printer -name "*.xml"`; do \
@@ -1266,7 +1279,7 @@ clean:
 	-rm -f foo2hbpl1.o foo2hbpl2.o hbpldecode.o
 	-rm -f opldecode.o gipddecode.o
 	-rm -f foo2dsst.o ddstdecode.o
-	-rm -f command2foo2lava-pjl.o
+	-rm -f command2foo2lava-pjl.o hbpl1status.o
 	-rm -f foo2oak.html foo2zjs.html foo2hp.html foo2xqx.html foo2lava.html
 	-rm -f foo2slx.html foo2qpdl.html foo2hiperc.html foo2hbpl.html
 	-rm -f foo2ddst.html
@@ -1621,6 +1634,7 @@ install-man: man
 	$(INSTALL) -c -m 644 foo2hbpl2.1 $(MANDIR)/man1/
 	$(INSTALL) -c -m 644 foo2hbpl2-wrapper.1 $(MANDIR)/man1/
 	$(INSTALL) -c -m 644 hbpldecode.1 $(MANDIR)/man1/
+	$(INSTALL) -c -m 644 hbpl1status.1 $(MANDIR)/man1/
 	$(INSTALL) -c -m 644 foo2ddst.1 $(MANDIR)/man1/
 	$(INSTALL) -c -m 644 foo2ddst-wrapper.1 $(MANDIR)/man1/
 	$(INSTALL) -c -m 644 ddstdecode.1 $(MANDIR)/man1/
